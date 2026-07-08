@@ -432,9 +432,6 @@
                     "twitter": {"type": "string", "format": "uri"}
                 }
             },
-            "licenseKey": {"type": "string"},
-            "codecanyonUsername": {"type": "string"},
-            "isLicenseActive": {"type": "boolean"},
             "appStoreUrl": {"type": "string", "format": "uri"},
             "playStoreUrl": {"type": "string", "format": "uri"},
             "apiKey": {"type": "string"}

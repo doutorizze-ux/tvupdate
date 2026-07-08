@@ -136,16 +136,6 @@ export async function installSetupAdminAction(data: { username: string, email: s
 }
 
 /**
- * Validates the product license key.
- */
-export async function testLicenseAction(licenseKey: string) {
-    const demoError = getDemoModeMutationError();
-    if (demoError) return demoError;
-    if (licenseKey.length > 10) { const db = await getDb(); await db.collection('settings').updateOne({ _id: 'general' as any }, { $set: { isLicenseActive: true, licenseKey } }, { upsert: true }); return { success: true, message: 'License activated successfully!' }; }
-    return { success: false, message: 'Invalid license key.' };
-}
-
-/**
  * Cryptographically verifies if the current session is a valid, unexpired administrator session.
  */
 export async function verifyAdminSession(): Promise<boolean> {

@@ -22,8 +22,6 @@ import {
   Activity,
   TrendingUp,
   Server,
-  ShieldCheck,
-  CheckCircle2,
   BarChart3
 } from 'lucide-react';
 import {
@@ -214,13 +212,6 @@ export function DashboardClient({ initialData, dateRange }: DashboardClientProps
                         <span className="text-xs font-bold">AI Node Engine</span>
                     </div>
                     <Badge variant="outline" className="text-[10px] text-green-500 border-green-500/20">Synced</Badge>
-                </div>
-                <div className="p-4 bg-primary/5 rounded-xl border border-primary/10 mt-2">
-                    <div className="flex items-center gap-2 text-primary mb-2">
-                        <ShieldCheck className="h-4 w-4" />
-                        <span className="text-[11px] font-black">License Status</span>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground leading-relaxed">System is running on a verified Envato Purchase Code. Multi-site protection active.</p>
                 </div>
             </CardContent>
         </Card>
