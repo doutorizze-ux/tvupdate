@@ -44,7 +44,7 @@ export async function login(prevState: any, formData: FormData) {
             httpOnly: true, 
             path: '/', 
             sameSite: 'lax', 
-            secure: process.env.NODE_ENV === 'production',
+            secure: process.env.COOKIE_SECURE?.toLowerCase() === 'true',
             maxAge: 60 * 60 * 24 * 7 // 7 days
         });
         redirect('/admin');
