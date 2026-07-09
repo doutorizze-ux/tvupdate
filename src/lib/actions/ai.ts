@@ -7,6 +7,20 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { handleError } from './utils';
 import { ServerPluginsSettings } from '../server-types';
 
+function getReadableApiError(error: any, fallback: string) {
+    const status = error?.status || error?.response?.status;
+    const code = error?.code || error?.error?.code;
+    const message =
+        error?.error?.message ||
+        error?.message ||
+        error?.response?.data?.error?.message ||
+        fallback;
+
+    return [status ? `HTTP ${status}` : '', code ? `code=${code}` : '', message]
+        .filter(Boolean)
+        .join(' - ');
+}
+
 export async function callAi(prompt: string, jsonMode: boolean = false) {
     const settings = await getPluginsSettings() as ServerPluginsSettings | null;
     const provider = settings?.aiProvider || 'groq';
@@ -45,7 +59,7 @@ export async function callAi(prompt: string, jsonMode: boolean = false) {
         if (!apiKey) throw new Error('Gemini API Key not configured.');
         const gemini = new GoogleGenerativeAI(apiKey);
         const model = gemini.getGenerativeModel({
-            model: 'gemini-3.5-flash',
+            model: 'gemini-1.5-flash',
             generationConfig: jsonMode
                 ? { temperature: 0.1, responseMimeType: 'application/json' }
                 : { temperature: 0.1 },
@@ -84,7 +98,22 @@ export async function testGroqKeyAction(apiKey: string) { try { const groq = new
 /**
  * Verifies the validity of the OpenAI API key.
  */
-export async function testOpenAiKeyAction(apiKey: string) { try { const openai = new OpenAI({ apiKey }); await openai.chat.completions.create({ messages: [{ role: 'user', content: 'test' }], model: 'gpt-4o-mini', max_tokens: 1 }); return { success: true, message: 'OpenAI API Key is valid!' }; } catch (e: any) { return handleError('testOpenAiKeyAction', e, 'OpenAI API Key verification failed.'); } }
+export async function testOpenAiKeyAction(apiKey: string) {
+    try {
+        const openai = new OpenAI({ apiKey });
+        await openai.chat.completions.create({
+            messages: [{ role: 'user', content: 'test' }],
+            model: 'gpt-4o-mini',
+            max_tokens: 1,
+        });
+        return { success: true, message: 'OpenAI API Key is valid!' };
+    } catch (e: any) {
+        return {
+            success: false,
+            error: getReadableApiError(e, 'OpenAI API Key verification failed.'),
+        };
+    }
+}
 
 /**
  * Verifies the Gemini key against the configured production model.
@@ -92,10 +121,13 @@ export async function testOpenAiKeyAction(apiKey: string) { try { const openai =
 export async function testGeminiKeyAction(apiKey: string) {
     try {
         const gemini = new GoogleGenerativeAI(apiKey);
-        const model = gemini.getGenerativeModel({ model: 'gemini-3.5-flash' });
+        const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash' });
         await model.generateContent('Reply with OK.');
         return { success: true, message: 'Gemini API Key is valid!' };
     } catch (e: any) {
-        return handleError('testGeminiKeyAction', e, 'Gemini API Key verification failed.');
+        return {
+            success: false,
+            error: getReadableApiError(e, 'Gemini API Key verification failed.'),
+        };
     }
 }
