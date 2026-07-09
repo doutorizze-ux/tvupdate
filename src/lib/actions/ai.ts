@@ -59,7 +59,7 @@ export async function callAi(prompt: string, jsonMode: boolean = false) {
         if (!apiKey) throw new Error('Gemini API Key not configured.');
         const gemini = new GoogleGenerativeAI(apiKey);
         const model = gemini.getGenerativeModel({
-            model: 'gemini-1.5-flash',
+            model: 'gemini-2.5-flash',
             generationConfig: jsonMode
                 ? { temperature: 0.1, responseMimeType: 'application/json' }
                 : { temperature: 0.1 },
@@ -121,7 +121,7 @@ export async function testOpenAiKeyAction(apiKey: string) {
 export async function testGeminiKeyAction(apiKey: string) {
     try {
         const gemini = new GoogleGenerativeAI(apiKey);
-        const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
         await model.generateContent('Reply with OK.');
         return { success: true, message: 'Gemini API Key is valid!' };
     } catch (e: any) {
